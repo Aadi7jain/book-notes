@@ -6,7 +6,7 @@
   <h1 class="form-heading"><%= heading %></h1>
 
   <% if (!book || !book.id) { %>
-  <div class="lookup">
+  <div class="lookup reveal">
     <p class="lookup-label">Find on Open Library</p>
     <div class="lookup-row">
       <input id="ol-input" type="text" class="input" placeholder="Search by title or author..." autocomplete="off" />
@@ -19,7 +19,7 @@
 
   <% if (error) { %><p class="form-error"><%= error %></p><% } %>
 
-  <form action="<%= action %>" method="POST" class="form">
+  <form action="<%= action %>" method="POST" class="form reveal">
 
     <div class="field-row field-row--2">
       <div class="field">

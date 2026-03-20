@@ -3,39 +3,38 @@
 <main class="main main--stats">
 
   <div class="stats-page-header">
-    <h1 class="stats-title">Reading stats</h1>
-    <p class="stats-sub">Everything by the numbers</p>
+    <h1 class="stats-title">Reading Stats</h1>
+    <p class="stats-sub">Your library by the numbers</p>
   </div>
 
   <div class="stats-overview">
-    <div class="overview-card overview-card--amber">
+    <div class="overview-card overview-card--accent">
       <span class="overview-n"><%= overview.total_read %></span>
-      <span class="overview-l">books read</span>
+      <span class="overview-l">Books read</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.total_pages ? Number(overview.total_pages).toLocaleString() : 0 %></span>
-      <span class="overview-l">pages read</span>
+      <span class="overview-l">Pages read</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.avg_rating ?? '—' %></span>
-      <span class="overview-l">average rating</span>
+      <span class="overview-l">Average rating</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.highest_rating ?? '—' %></span>
-      <span class="overview-l">highest rating</span>
+      <span class="overview-l">Highest rating</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.genre_count %></span>
-      <span class="overview-l">genres explored</span>
+      <span class="overview-l">Genres explored</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.currently_reading %></span>
-      <span class="overview-l">currently reading</span>
+      <span class="overview-l">Currently reading</span>
     </div>
   </div>
 
   <div class="stats-grid">
-
     <% if (byGenre.length) { %>
     <section class="stats-section">
       <h2 class="section-heading">Books by genre</h2>
@@ -45,7 +44,7 @@
           <div class="genre-row">
             <span class="genre-name"><%= g.genre %></span>
             <div class="genre-bar-wrap">
-              <div class="genre-bar" style="width:<%= Math.round((Number(g.count)/maxCount)*100) %>%"></div>
+              <div class="genre-bar" style="--bar-width:<%= Math.round((Number(g.count)/maxCount)*100) %>%"></div>
             </div>
             <span class="genre-count"><%= g.count %></span>
           </div>
@@ -59,9 +58,7 @@
       <h2 class="section-heading">Books per year</h2>
       <div class="year-table">
         <div class="year-header">
-          <span>Year</span>
-          <span>Books</span>
-          <span>Avg rating</span>
+          <span>Year</span><span>Books</span><span>Avg rating</span>
         </div>
         <% byYear.forEach(y => { %>
           <div class="year-row">
@@ -73,7 +70,6 @@
       </div>
     </section>
     <% } %>
-
   </div>
 
   <% if (topRated.length) { %>

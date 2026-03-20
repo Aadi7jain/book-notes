@@ -1,9 +1,9 @@
 <%- include('partials/head', { pageTitle: 'Error' }) %>
 <main class="main">
   <div class="empty" style="padding-top:100px">
-    <p style="color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Error</p>
-    <p style="margin-bottom:28px;font-size:15px"><%= message || 'Something went wrong.' %></p>
-    <a href="/" class="link-accent">Go home</a>
+    <div class="empty-icon">&#9888;</div>
+    <p><%= message || 'Something went wrong.' %></p>
+    <a href="/" class="link-teal">Go home</a>
   </div>
 </main>
 <%- include('partials/foot') %>

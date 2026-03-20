@@ -15,34 +15,28 @@
       <div class="detail-rating">
         <span class="rating-num"><%= book.rating %></span>
         <span class="rating-denom">/ 10</span>
-        <div class="rating-bar"><div class="rating-fill" style="width:<%= book.rating * 10 %>%"></div></div>
+        <div class="rating-bar">
+          <div class="rating-fill" style="--target-width:<%= book.rating * 10 %>%"></div>
+        </div>
       </div>
       <% } %>
 
       <dl class="detail-meta">
         <% if (book.status) { %>
           <dt>Status</dt>
-          <dd class="status--<%= book.status %>"><%= book.status === 'reading' ? 'Currently reading' : book.status === 'want' ? 'Want to read' : 'Read' %></dd>
+          <dd class="status--<%= book.status %>">
+            <%= book.status === 'reading' ? 'Currently reading' : book.status === 'want' ? 'Want to read' : 'Read' %>
+          </dd>
         <% } %>
-        <% if (book.date_fmt) { %>
-          <dt>Finished</dt><dd><%= book.date_fmt %></dd>
-        <% } %>
-        <% if (book.genre) { %>
-          <dt>Genre</dt><dd><%= book.genre %></dd>
-        <% } %>
-        <% if (book.page_count) { %>
-          <dt>Pages</dt><dd><%= book.page_count.toLocaleString() %></dd>
-        <% } %>
-        <% if (book.isbn) { %>
-          <dt>ISBN</dt><dd class="isbn"><%= book.isbn %></dd>
-        <% } %>
+        <% if (book.date_fmt)   { %><dt>Finished</dt><dd><%= book.date_fmt %></dd><% } %>
+        <% if (book.genre)      { %><dt>Genre</dt><dd><%= book.genre %></dd><% } %>
+        <% if (book.page_count) { %><dt>Pages</dt><dd><%= book.page_count.toLocaleString() %></dd><% } %>
+        <% if (book.isbn)       { %><dt>ISBN</dt><dd class="isbn"><%= book.isbn %></dd><% } %>
       </dl>
 
       <div class="detail-actions">
-        <a href="/edit/<%= book.id %>" class="btn btn--outline">Edit</a>
-
-        <form action="/delete/<%= book.id %>" method="POST">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <a href="/edit/<%= book.id %>" class="btn btn--outline">Edit book</a>
+        <form action="/delete/<%= book.id %>" method="POST" class="delete-form">
           <button type="submit" class="btn btn--danger">Delete</button>
         </form>
       </div>
@@ -67,7 +61,7 @@
           <% }) %>
         </section>
       <% } else { %>
-        <p class="no-content">No notes yet. <a href="/edit/<%= book.id %>" class="link-amber">Add some</a></p>
+        <p class="no-content">No notes yet. <a href="/edit/<%= book.id %>" class="link-teal">Add some</a></p>
       <% } %>
     </article>
 
