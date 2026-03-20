@@ -40,7 +40,9 @@
 
       <div class="detail-actions">
         <a href="/edit/<%= book.id %>" class="btn btn--outline">Edit</a>
-        <form action="/delete/<%= book.id %>" method="POST" onsubmit="return confirm('Remove this book?')">
+
+        <form action="/delete/<%= book.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit" class="btn btn--danger">Delete</button>
         </form>
       </div>
