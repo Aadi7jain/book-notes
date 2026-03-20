@@ -190,9 +190,19 @@ app.get("/book/:id",
   handleValidationErrors,
   async (req, res) => {
     try {
-      const { rows } = await db.query("SELECT * FROM books WHERE id = $1", [parseInt(req.params.id)]);
-      if (!rows.length) return res.status(404).render("error", { message: "Book not found." });
-      res.render("book", { book: shape(rows[0], "L") });
+      const { rows } = await db.query(
+        "SELECT * FROM books WHERE id = $1",
+        [parseInt(req.params.id)]
+      );
+
+      if (!rows.length) {
+        return res.status(404).render("error", { message: "Book not found." });
+      }
+
+      res.render("book", {
+        book: shape(rows[0], "L"),
+        csrfToken: generateToken(req, res)
+      });
     } catch (err) {
       console.error(err);
       res.status(500).render("error", { message: "Could not load book." });
@@ -305,11 +315,12 @@ app.post("/edit/:id",
 );
 
 app.post("/delete/:id",
-  writeLimiter, param("id").isInt({ min: 1 }), handleValidationErrors,
+  param("id").isInt({ min: 1 }).withMessage("Invalid book ID."),
+  handleValidationErrors,
   async (req, res) => {
     try {
       await db.query("DELETE FROM books WHERE id = $1", [parseInt(req.params.id)]);
-      res.redirect("/?deleted=1");
+      res.redirect("/");
     } catch (err) {
       console.error(err);
       res.status(500).render("error", { message: "Could not delete book." });
