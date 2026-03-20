@@ -19,15 +19,57 @@ import cookieParser   from "cookie-parser";
 import compression    from "compression";
 import morgan         from "morgan";
 // csrf-csrf: disabled in dev, enable in production
-import { fileURLToPath } from "url";
-import { randomBytes } from 'crypto';
+import { randomBytes, timingSafeEqual } from 'crypto';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
+// Generate CSRF token (reuse if already exists)
+function generateToken(req, res) {
+  let token = req.cookies?.csrf_token;
 
-const app        = express();
-const PORT       = process.env.PORT || 3000;
-const IS_PROD    = process.env.NODE_ENV === "production";
+  if (!token) {
+    token = randomBytes(32).toString('hex');
+
+    res.cookie('csrf_token', token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 // 1 hour
+    });
+  }
+
+  return token;
+}
+
+// Middleware to protect POST/DELETE requests
+function doubleCsrfProtection(req, res, next) {
+  const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+
+  if (safeMethods.includes(req.method)) {
+    return next();
+  }
+
+  const cookieToken = req.cookies?.csrf_token;
+  const bodyToken = req.body?._csrf || req.get('x-csrf-token');
+
+  if (!cookieToken || !bodyToken) {
+    const err = new Error('invalid csrf token');
+    err.code = 'EBADCSRFTOKEN';
+    return next(err);
+  }
+
+  const cookieBuf = Buffer.from(cookieToken);
+  const bodyBuf = Buffer.from(bodyToken);
+
+  if (
+    cookieBuf.length !== bodyBuf.length ||
+    !timingSafeEqual(cookieBuf, bodyBuf)
+  ) {
+    const err = new Error('invalid csrf token');
+    err.code = 'EBADCSRFTOKEN';
+    return next(err);
+  }
+
+  next();
+}
 
 // ── Trust proxy (needed for Railway / Heroku) ──────────
 app.set("trust proxy", 1);
