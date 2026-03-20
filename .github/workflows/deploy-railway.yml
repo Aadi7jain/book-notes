@@ -1,0 +1,68 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: (Optional) Build assets
+        run: |
+          if [ -f package.json ] && jq -e '.scripts.build' package.json > /dev/null 2>&1; then
+            npm run build
+          else
+            echo "No build step defined; skipping"
+          fi
+
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli@latest
+
+      - name: Login to Railway
+        env:
+          RAILWAY_API_KEY: ${{ secrets.RAILWAY_API_KEY }}
+        run: |
+          if [ -z "$RAILWAY_API_KEY" ]; then
+            echo "Missing RAILWAY_API_KEY secret"; exit 1;
+          fi
+          railway login --apiKey "$RAILWAY_API_KEY"
+
+      - name: (Optional) Link to Railway project/service
+        if: ${{ secrets.RAILWAY_PROJECT_ID != '' || secrets.RAILWAY_SERVICE_ID != '' }}
+        env:
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+        run: |
+          set -e
+          if [ -n "$RAILWAY_PROJECT_ID" ]; then
+            echo "Linking to project $RAILWAY_PROJECT_ID"
+            railway link --project "$RAILWAY_PROJECT_ID" || true
+          fi
+          if [ -n "$RAILWAY_SERVICE_ID" ]; then
+            echo "Selecting service $RAILWAY_SERVICE_ID"
+            railway up --service "$RAILWAY_SERVICE_ID" --detach || true
+          fi
+
+      - name: Deploy to Railway (detached)
+        env:
+          NODE_ENV: production
+          RAILWAY_ENVIRONMENT: production
+        run: |
+          # If service deploy already ran in the link step, skip the default up
+          railway up --detach
+
+# Required repo secrets:
+# - RAILWAY_API_KEY : Railway personal API key with deploy permissions
+# Optional: RAILWAY_PROJECT_ID, RAILWAY_SERVICE_ID

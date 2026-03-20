@@ -1,0 +1,106 @@
+<%- include('partials/head', { pageTitle: heading }) %>
+
+<main class="main main--form">
+
+  <a href="/" class="back-link">All books</a>
+  <h1 class="form-heading"><%= heading %></h1>
+
+  <% if (!book || !book.id) { %>
+  <div class="lookup">
+    <p class="lookup-label">Find on Open Library</p>
+    <div class="lookup-row">
+      <input id="ol-input" type="text" class="input" placeholder="Search by title or author..." autocomplete="off" />
+      <button id="ol-btn" type="button" class="btn btn--primary">Search</button>
+    </div>
+    <div id="ol-results" class="ol-results"></div>
+  </div>
+  <hr class="form-rule" />
+  <% } %>
+
+  <% if (error) { %><p class="form-error"><%= error %></p><% } %>
+
+  <form action="<%= action %>" method="POST" class="form">
+
+    <div class="field-row field-row--2">
+      <div class="field">
+        <label for="f-title">Title <span class="req">*</span></label>
+        <input id="f-title" name="title" type="text" class="input" required
+               value="<%= book ? book.title||'' : '' %>" placeholder="Title of the book" />
+      </div>
+      <div class="field">
+        <label for="f-author">Author <span class="req">*</span></label>
+        <input id="f-author" name="author" type="text" class="input" required
+               value="<%= book ? book.author||'' : '' %>" placeholder="Author name" />
+      </div>
+    </div>
+
+    <div class="field-row field-row--3">
+      <div class="field">
+        <label for="f-isbn">ISBN</label>
+        <input id="f-isbn" name="isbn" type="text" class="input"
+               value="<%= book ? book.isbn||'' : '' %>" placeholder="e.g. 9780374533557" />
+      </div>
+      <div class="field">
+        <label for="f-genre">Genre</label>
+        <input id="f-genre" name="genre" type="text" class="input"
+               value="<%= book ? book.genre||'' : '' %>" placeholder="e.g. Psychology" />
+      </div>
+      <div class="field">
+        <label for="f-pages">Pages</label>
+        <input id="f-pages" name="page_count" type="number" min="1" class="input"
+               value="<%= book ? book.page_count||'' : '' %>" placeholder="352" />
+      </div>
+    </div>
+
+    <div class="field-row field-row--3">
+      <div class="field">
+        <label for="f-rating">Rating (1–10)</label>
+        <input id="f-rating" name="rating" type="number" min="1" max="10" class="input"
+               value="<%= book ? book.rating||'' : '' %>" placeholder="—" />
+      </div>
+      <div class="field">
+        <label for="f-status">Status</label>
+        <select id="f-status" name="status" class="input">
+          <option value="read"    <%= (!book || book.status==='read')   ? 'selected':'' %>>Read</option>
+          <option value="reading" <%= (book && book.status==='reading') ? 'selected':'' %>>Currently reading</option>
+          <option value="want"    <%= (book && book.status==='want')    ? 'selected':'' %>>Want to read</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-date">Date read</label>
+        <input id="f-date" name="date_read" type="date" class="input"
+               value="<%= book && book.date_read ? new Date(book.date_read).toISOString().split('T')[0] : '' %>" />
+      </div>
+    </div>
+
+    <div class="cover-preview">
+      <label class="preview-label">Cover preview</label>
+      <div class="preview-box">
+        <img id="cover-preview"
+             src="<%= book && book.isbn ? 'https://covers.openlibrary.org/b/isbn/'+book.isbn.trim()+'-M.jpg' : '/images/no-cover.svg' %>"
+             alt="" onerror="this.src='/images/no-cover.svg'" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="f-quote">Favourite quote</label>
+      <textarea id="f-quote" name="favourite_quote" class="input textarea--sm"
+                rows="3" placeholder="A line that stayed with you..."><%= book ? book.favourite_quote||'' : '' %></textarea>
+    </div>
+
+    <div class="field">
+      <label for="f-notes">Notes</label>
+      <textarea id="f-notes" name="notes" class="input textarea--lg"
+                rows="10" placeholder="What did you take away? What stood out?"><%= book ? book.notes||'' : '' %></textarea>
+    </div>
+
+    <div class="form-footer">
+      <a href="/" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary"><%= book && book.id ? 'Save changes' : 'Add book' %></button>
+    </div>
+
+  </form>
+</main>
+
+<%- include('partials/foot') %>
+<script src="/js/form.js"></script>

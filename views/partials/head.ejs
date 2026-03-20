@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof pageTitle !== 'undefined' && pageTitle ? pageTitle + ' — Book Notes' : 'Book Notes' %></title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,600,700,800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="toast-container" id="toastContainer"></div>
+<div class="page-transition" id="pageTransition"></div>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-dot"></div>
+    Book Notes
+  </a>
+  <div class="nav-links">
+    <a href="/stats" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'stats' ? 'nav-link-active' : '' %>">Stats</a>
+    <a href="/add" class="nav-cta">Add book</a>
+  </div>
+</nav>
+
+<div class="page-top"></div>

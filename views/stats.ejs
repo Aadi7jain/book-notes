@@ -1,0 +1,100 @@
+<%- include('partials/head', { pageTitle: 'Stats', activePage: 'stats' }) %>
+
+<main class="main main--stats">
+
+  <div class="stats-page-header">
+    <h1 class="stats-title">Reading stats</h1>
+    <p class="stats-sub">Everything by the numbers</p>
+  </div>
+
+  <div class="stats-overview">
+    <div class="overview-card overview-card--amber">
+      <span class="overview-n"><%= overview.total_read %></span>
+      <span class="overview-l">books read</span>
+    </div>
+    <div class="overview-card">
+      <span class="overview-n"><%= overview.total_pages ? Number(overview.total_pages).toLocaleString() : 0 %></span>
+      <span class="overview-l">pages read</span>
+    </div>
+    <div class="overview-card">
+      <span class="overview-n"><%= overview.avg_rating ?? '—' %></span>
+      <span class="overview-l">average rating</span>
+    </div>
+    <div class="overview-card">
+      <span class="overview-n"><%= overview.highest_rating ?? '—' %></span>
+      <span class="overview-l">highest rating</span>
+    </div>
+    <div class="overview-card">
+      <span class="overview-n"><%= overview.genre_count %></span>
+      <span class="overview-l">genres explored</span>
+    </div>
+    <div class="overview-card">
+      <span class="overview-n"><%= overview.currently_reading %></span>
+      <span class="overview-l">currently reading</span>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+
+    <% if (byGenre.length) { %>
+    <section class="stats-section">
+      <h2 class="section-heading">Books by genre</h2>
+      <% const maxCount = Math.max(...byGenre.map(g => Number(g.count))); %>
+      <div class="genre-bars">
+        <% byGenre.forEach(g => { %>
+          <div class="genre-row">
+            <span class="genre-name"><%= g.genre %></span>
+            <div class="genre-bar-wrap">
+              <div class="genre-bar" style="width:<%= Math.round((Number(g.count)/maxCount)*100) %>%"></div>
+            </div>
+            <span class="genre-count"><%= g.count %></span>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+    <% } %>
+
+    <% if (byYear.length) { %>
+    <section class="stats-section">
+      <h2 class="section-heading">Books per year</h2>
+      <div class="year-table">
+        <div class="year-header">
+          <span>Year</span>
+          <span>Books</span>
+          <span>Avg rating</span>
+        </div>
+        <% byYear.forEach(y => { %>
+          <div class="year-row">
+            <span class="year-val"><%= Math.round(y.year) %></span>
+            <span class="year-count"><%= y.count %></span>
+            <span class="year-rating"><%= y.avg_rating ?? '—' %></span>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+    <% } %>
+
+  </div>
+
+  <% if (topRated.length) { %>
+  <section class="stats-section stats-section--wide">
+    <h2 class="section-heading">Top rated</h2>
+    <div class="top-list">
+      <% topRated.forEach((book, i) => { %>
+        <a href="/book/<%= book.id %>" class="top-item">
+          <span class="top-rank">#<%= i+1 %></span>
+          <img src="<%= book.cover_url %>" alt="" class="top-cover" onerror="this.src='/images/no-cover.svg'" />
+          <div class="top-info">
+            <span class="top-title"><%= book.title %></span>
+            <span class="top-author"><%= book.author %></span>
+          </div>
+          <span class="top-rating"><%= book.rating %><span class="top-denom">/10</span></span>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+</main>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,76 @@
+<%- include('partials/head', { pageTitle: book.title }) %>
+
+<main class="main main--detail">
+
+  <a href="/" class="back-link">All books</a>
+
+  <div class="detail">
+
+    <aside class="detail-aside">
+      <div class="detail-cover-frame">
+        <img src="<%= book.cover_url %>" alt="<%= book.title %>" class="detail-cover" onerror="this.src='/images/no-cover.svg'" />
+      </div>
+
+      <% if (book.rating) { %>
+      <div class="detail-rating">
+        <span class="rating-num"><%= book.rating %></span>
+        <span class="rating-denom">/ 10</span>
+        <div class="rating-bar"><div class="rating-fill" style="width:<%= book.rating * 10 %>%"></div></div>
+      </div>
+      <% } %>
+
+      <dl class="detail-meta">
+        <% if (book.status) { %>
+          <dt>Status</dt>
+          <dd class="status--<%= book.status %>"><%= book.status === 'reading' ? 'Currently reading' : book.status === 'want' ? 'Want to read' : 'Read' %></dd>
+        <% } %>
+        <% if (book.date_fmt) { %>
+          <dt>Finished</dt><dd><%= book.date_fmt %></dd>
+        <% } %>
+        <% if (book.genre) { %>
+          <dt>Genre</dt><dd><%= book.genre %></dd>
+        <% } %>
+        <% if (book.page_count) { %>
+          <dt>Pages</dt><dd><%= book.page_count.toLocaleString() %></dd>
+        <% } %>
+        <% if (book.isbn) { %>
+          <dt>ISBN</dt><dd class="isbn"><%= book.isbn %></dd>
+        <% } %>
+      </dl>
+
+      <div class="detail-actions">
+        <a href="/edit/<%= book.id %>" class="btn btn--outline">Edit</a>
+        <form action="/delete/<%= book.id %>" method="POST" onsubmit="return confirm('Remove this book?')">
+          <button type="submit" class="btn btn--danger">Delete</button>
+        </form>
+      </div>
+    </aside>
+
+    <article class="detail-body">
+      <% if (book.genre) { %><p class="detail-genre"><%= book.genre %></p><% } %>
+      <h1 class="detail-title"><%= book.title %></h1>
+      <p class="detail-author">by <%= book.author %></p>
+
+      <% if (book.favourite_quote) { %>
+        <blockquote class="detail-quote">
+          <p><%= book.favourite_quote %></p>
+        </blockquote>
+      <% } %>
+
+      <% if (book.notes) { %>
+        <section class="detail-notes">
+          <h2 class="notes-heading">Notes</h2>
+          <% book.notes.split('\n').filter(p => p.trim()).forEach(para => { %>
+            <p><%= para %></p>
+          <% }) %>
+        </section>
+      <% } else { %>
+        <p class="no-content">No notes yet. <a href="/edit/<%= book.id %>" class="link-amber">Add some</a></p>
+      <% } %>
+    </article>
+
+  </div>
+
+</main>
+
+<%- include('partials/foot') %>

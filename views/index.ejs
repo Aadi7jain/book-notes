@@ -1,0 +1,104 @@
+<%- include('partials/head', { pageTitle: '', activePage: 'home' }) %>
+
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-n"><%= stats.total_read %></span>
+    <span class="stat-l">Read</span>
+  </div>
+  <div class="stat-rule"></div>
+  <div class="stat">
+    <span class="stat-n"><%= stats.currently_reading %></span>
+    <span class="stat-l">Reading</span>
+  </div>
+  <div class="stat-rule"></div>
+  <div class="stat">
+    <span class="stat-n"><%= stats.want_to_read %></span>
+    <span class="stat-l">Want to read</span>
+  </div>
+  <div class="stat-rule"></div>
+  <div class="stat">
+    <span class="stat-n"><%= stats.avg_rating ?? '—' %></span>
+    <span class="stat-l">Avg rating</span>
+  </div>
+  <div class="stat-rule"></div>
+  <div class="stat">
+    <span class="stat-n"><%= Number(stats.total_pages).toLocaleString() %></span>
+    <span class="stat-l">Pages read</span>
+  </div>
+</div>
+
+<main class="main">
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <input id="live-search" type="text" class="search-input" placeholder="Search by title or author..." autocomplete="off" />
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Sort</span>
+      <div class="pills">
+        <a href="/?sort=date_read&status=<%= status %>&genre=<%= genre %>" class="pill <%= sort==='date_read'?'pill--on':'' %>">Recent</a>
+        <a href="/?sort=rating&status=<%= status %>&genre=<%= genre %>"    class="pill <%= sort==='rating'?'pill--on':'' %>">Rating</a>
+        <a href="/?sort=title&status=<%= status %>&genre=<%= genre %>"     class="pill <%= sort==='title'?'pill--on':'' %>">A–Z</a>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Status</span>
+      <div class="pills">
+        <a href="/?sort=<%= sort %>&status=&genre=<%= genre %>"       class="pill <%= !status?'pill--on':'' %>">All</a>
+        <a href="/?sort=<%= sort %>&status=read&genre=<%= genre %>"    class="pill <%= status==='read'?'pill--on':'' %>">Read</a>
+        <a href="/?sort=<%= sort %>&status=reading&genre=<%= genre %>" class="pill <%= status==='reading'?'pill--on':'' %>">Reading</a>
+        <a href="/?sort=<%= sort %>&status=want&genre=<%= genre %>"    class="pill <%= status==='want'?'pill--on':'' %>">Want</a>
+      </div>
+    </div>
+
+    <% if (genres.length) { %>
+    <div class="filter-group">
+      <span class="filter-label">Genre</span>
+      <div class="pills">
+        <a href="/?sort=<%= sort %>&status=<%= status %>&genre=" class="pill <%= !genre?'pill--on':'' %>">All</a>
+        <% genres.forEach(g => { %>
+          <a href="/?sort=<%= sort %>&status=<%= status %>&genre=<%= encodeURIComponent(g) %>"
+             class="pill <%= genre===g?'pill--on':'' %>"><%= g %></a>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+
+  <% if (!books.length) { %>
+    <div class="empty">
+      <p>No books here yet.</p>
+      <a href="/add" class="link-accent">Add your first one</a>
+    </div>
+  <% } else { %>
+    <div class="grid" id="book-grid">
+      <% books.forEach((book, i) => { %>
+        <a href="/book/<%= book.id %>" class="card"
+           data-title="<%= book.title.toLowerCase() %>"
+           data-author="<%= book.author.toLowerCase() %>"
+           style="--i:<%= i %>">
+          <div class="card-cover-wrap">
+            <img src="<%= book.cover_url %>" alt="" class="card-cover" loading="lazy" onerror="this.src='/images/no-cover.svg'" />
+            <% if (book.status === 'reading') { %><span class="badge badge--reading">Reading</span><% } %>
+            <% if (book.status === 'want')    { %><span class="badge badge--want">Want</span><% } %>
+          </div>
+          <div class="card-body">
+            <p class="card-title"><%= book.title %></p>
+            <p class="card-author"><%= book.author %></p>
+            <div class="card-foot">
+              <% if (book.rating) { %><span class="card-rating"><%= book.rating %><span class="card-rating-sub">/10</span></span><% } %>
+              <% if (book.date_fmt) { %><span class="card-date"><%= book.date_fmt %></span><% } %>
+              <% if (book.genre)   { %><span class="card-tag"><%= book.genre %></span><% } %>
+            </div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+</main>
+
+<%- include('partials/foot') %>
+<script src="/js/main.js"></script>
