@@ -43,13 +43,13 @@ app.use(compression());
 app.use(morgan(IS_PROD ? "combined" : "dev"));
 
 app.use(helmet({
-  contentSecurityPolicy: false,
-  hsts:                  false,
-  noSniff:               true,
-  frameguard:            { action: "deny" },
-  xssFilter:             true,
-  hidePoweredBy:         true,
-  referrerPolicy:        { policy: "strict-origin-when-cross-origin" },
+  contentSecurityPolicy:        false,
+  hsts:                         false,
+  noSniff:                      true,
+  frameguard:                   { action: "deny" },
+  xssFilter:                    true,
+  hidePoweredBy:                true,
+  referrerPolicy:               { policy: "strict-origin-when-cross-origin" },
   permittedCrossDomainPolicies: false,
 }));
 
@@ -140,8 +140,6 @@ const bookValidators = [
     .isLength({ max: 50000 }).withMessage("Notes must be under 50,000 characters."),
 ];
 
-// ── Routes ─────────────────────────────────────────────
-
 app.get("/",
   query("sort").optional().isIn(["rating", "date_read", "title"]),
   query("status").optional().isIn(["", "read", "reading", "want"]),
@@ -190,19 +188,9 @@ app.get("/book/:id",
   handleValidationErrors,
   async (req, res) => {
     try {
-      const { rows } = await db.query(
-        "SELECT * FROM books WHERE id = $1",
-        [parseInt(req.params.id)]
-      );
-
-      if (!rows.length) {
-        return res.status(404).render("error", { message: "Book not found." });
-      }
-
-      res.render("book", {
-        book: shape(rows[0], "L"),
-        csrfToken: generateToken(req, res)
-      });
+      const { rows } = await db.query("SELECT * FROM books WHERE id = $1", [parseInt(req.params.id)]);
+      if (!rows.length) return res.status(404).render("error", { message: "Book not found." });
+      res.render("book", { book: shape(rows[0], "L") });
     } catch (err) {
       console.error(err);
       res.status(500).render("error", { message: "Could not load book." });
@@ -315,12 +303,11 @@ app.post("/edit/:id",
 );
 
 app.post("/delete/:id",
-  param("id").isInt({ min: 1 }).withMessage("Invalid book ID."),
-  handleValidationErrors,
+  writeLimiter, param("id").isInt({ min: 1 }), handleValidationErrors,
   async (req, res) => {
     try {
       await db.query("DELETE FROM books WHERE id = $1", [parseInt(req.params.id)]);
-      res.redirect("/");
+      res.redirect("/?deleted=1");
     } catch (err) {
       console.error(err);
       res.status(500).render("error", { message: "Could not delete book." });
