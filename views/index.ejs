@@ -1,30 +1,15 @@
-<%- include('partials/head', { pageTitle: '', activePage: 'home' }) %>
+<%- include('partials/head', { pageTitle: '', activePage: 'home', user: user }) %>
 
 <div class="stats-bar">
-  <div class="stat">
-    <span class="stat-n"><%= stats.total_read %></span>
-    <span class="stat-l">Read</span>
-  </div>
+  <div class="stat"><span class="stat-n"><%= stats.total_read %></span><span class="stat-l">Read</span></div>
   <div class="stat-rule"></div>
-  <div class="stat">
-    <span class="stat-n"><%= stats.currently_reading %></span>
-    <span class="stat-l">Reading</span>
-  </div>
+  <div class="stat"><span class="stat-n"><%= stats.currently_reading %></span><span class="stat-l">Reading</span></div>
   <div class="stat-rule"></div>
-  <div class="stat">
-    <span class="stat-n"><%= stats.want_to_read %></span>
-    <span class="stat-l">Want to read</span>
-  </div>
+  <div class="stat"><span class="stat-n"><%= stats.want_to_read %></span><span class="stat-l">Want</span></div>
   <div class="stat-rule"></div>
-  <div class="stat">
-    <span class="stat-n"><%= stats.avg_rating ?? '—' %></span>
-    <span class="stat-l">Avg rating</span>
-  </div>
+  <div class="stat"><span class="stat-n"><%= stats.avg_rating ?? '—' %></span><span class="stat-l">Avg rating</span></div>
   <div class="stat-rule"></div>
-  <div class="stat">
-    <span class="stat-n"><%= Number(stats.total_pages).toLocaleString() %></span>
-    <span class="stat-l">Pages read</span>
-  </div>
+  <div class="stat"><span class="stat-n"><%= Number(stats.total_pages).toLocaleString() %></span><span class="stat-l">Pages</span></div>
 </div>
 
 <main class="main">
@@ -34,35 +19,38 @@
       <span class="search-icon">&#9906;</span>
       <input id="live-search" type="text" class="search-input" placeholder="Search titles, authors..." autocomplete="off" />
     </div>
-    <div class="filter-group">
-      <span class="filter-label">Sort</span>
-      <div class="pills">
-        <a href="/?sort=date_read&status=<%= status %>&genre=<%= genre %>" class="pill <%= sort==='date_read'?'pill--on':'' %>">Recent</a>
-        <a href="/?sort=rating&status=<%= status %>&genre=<%= genre %>"    class="pill <%= sort==='rating'?'pill--on':'' %>">Rating</a>
-        <a href="/?sort=title&status=<%= status %>&genre=<%= genre %>"     class="pill <%= sort==='title'?'pill--on':'' %>">A–Z</a>
+    <div class="toolbar-filters">
+      <div class="filter-group">
+        <span class="filter-label">Sort</span>
+        <div class="pills">
+          <a href="/?sort=date_read&status=<%= status %>&genre=<%= genre %>" class="pill <%= sort==='date_read'?'pill--on':'' %>">Recent</a>
+          <a href="/?sort=rating&status=<%= status %>&genre=<%= genre %>"    class="pill <%= sort==='rating'?'pill--on':'' %>">Rating</a>
+          <a href="/?sort=title&status=<%= status %>&genre=<%= genre %>"     class="pill <%= sort==='title'?'pill--on':'' %>">A–Z</a>
+        </div>
       </div>
-    </div>
-    <div class="filter-group">
-      <span class="filter-label">Status</span>
-      <div class="pills">
-        <a href="/?sort=<%= sort %>&status=&genre=<%= genre %>"       class="pill <%= !status?'pill--on':'' %>">All</a>
-        <a href="/?sort=<%= sort %>&status=read&genre=<%= genre %>"    class="pill <%= status==='read'?'pill--on':'' %>">Read</a>
-        <a href="/?sort=<%= sort %>&status=reading&genre=<%= genre %>" class="pill <%= status==='reading'?'pill--on':'' %>">Reading</a>
-        <a href="/?sort=<%= sort %>&status=want&genre=<%= genre %>"    class="pill <%= status==='want'?'pill--on':'' %>">Want</a>
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <div class="pills">
+          <a href="/?sort=<%= sort %>&status=&genre=<%= genre %>"       class="pill <%= !status?'pill--on':'' %>">All</a>
+          <a href="/?sort=<%= sort %>&status=read&genre=<%= genre %>"    class="pill <%= status==='read'?'pill--on':'' %>">Read</a>
+          <a href="/?sort=<%= sort %>&status=reading&genre=<%= genre %>" class="pill <%= status==='reading'?'pill--on':'' %>">Reading</a>
+          <a href="/?sort=<%= sort %>&status=want&genre=<%= genre %>"    class="pill <%= status==='want'?'pill--on':'' %>">Want</a>
+        </div>
       </div>
-    </div>
-    <% if (genres.length) { %>
-    <div class="filter-group">
-      <span class="filter-label">Genre</span>
-      <div class="pills">
-        <a href="/?sort=<%= sort %>&status=<%= status %>&genre=" class="pill <%= !genre?'pill--on':'' %>">All</a>
-        <% genres.forEach(g => { %>
-          <a href="/?sort=<%= sort %>&status=<%= status %>&genre=<%= encodeURIComponent(g) %>"
-             class="pill <%= genre===g?'pill--on':'' %>"><%= g %></a>
-        <% }) %>
+      <% if (genres.length) { %>
+      <div class="filter-group">
+        <span class="filter-label">Genre</span>
+        <div class="pills">
+          <a href="/?sort=<%= sort %>&status=<%= status %>&genre=" class="pill <%= !genre?'pill--on':'' %>">All</a>
+          <% genres.forEach(g => { %>
+            <a href="/?sort=<%= sort %>&status=<%= status %>&genre=<%= encodeURIComponent(g) %>"
+               class="pill <%= genre===g?'pill--on':'' %>"><%= g %></a>
+          <% }) %>
+        </div>
       </div>
+      <% } %>
     </div>
-    <% } %>
+    <a href="/add" class="btn btn--primary toolbar-add">+ Add book</a>
   </div>
 
   <% if (!books.length) { %>

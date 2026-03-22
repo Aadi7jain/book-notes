@@ -1,0 +1,32 @@
+<%- include('partials/head', { pageTitle: 'Log in', user: null }) %>
+
+<main class="auth-main">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <div class="nav-brand-dot"></div>
+        Book Notes
+      </div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-sub">Log in to your reading library</p>
+    </div>
+
+    <% if (error) { %><p class="auth-error"><%= error %></p><% } %>
+
+    <form action="/login" method="POST" class="auth-form">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" class="input" required placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" class="input" required placeholder="Your password" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn--primary btn--full">Log in</button>
+    </form>
+
+    <p class="auth-switch">Don't have an account? <a href="/signup" class="link-teal">Sign up</a></p>
+  </div>
+</main>
+
+<%- include('partials/foot') %>

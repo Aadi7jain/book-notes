@@ -1,4 +1,4 @@
-<%- include('partials/head', { pageTitle: 'Error' }) %>
+<%- include('partials/head', { pageTitle: 'Error', user: typeof user !== 'undefined' ? user : null }) %>
 <main class="main">
   <div class="empty" style="padding-top:100px">
     <div class="empty-icon">&#9888;</div>

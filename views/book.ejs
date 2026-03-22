@@ -1,9 +1,7 @@
-<%- include('partials/head', { pageTitle: book.title }) %>
+<%- include('partials/head', { pageTitle: book.title, user: user }) %>
 
 <main class="main main--detail">
-
   <a href="/" class="back-link">All books</a>
-
   <div class="detail">
 
     <aside class="detail-aside">
@@ -66,7 +64,6 @@
     </article>
 
   </div>
-
 </main>
 
 <%- include('partials/foot') %>

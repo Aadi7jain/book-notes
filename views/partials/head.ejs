@@ -15,7 +15,6 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 <div class="toast-container" id="toastContainer"></div>
-<div class="page-transition" id="pageTransition"></div>
 
 <nav class="nav" id="mainNav">
   <a href="/" class="nav-brand">
@@ -23,8 +22,16 @@
     Book Notes
   </a>
   <div class="nav-links">
-    <a href="/stats" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'stats' ? 'nav-link-active' : '' %>">Stats</a>
-    <a href="/add" class="nav-cta">Add book</a>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <a href="/stats" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'stats' ? 'nav-link-active' : '' %>">Stats</a>
+      <span class="nav-user"><%- user %></span>
+      <form action="/logout" method="POST" style="display:inline">
+        <button type="submit" class="nav-logout">Log out</button>
+      </form>
+    <% } else { %>
+      <a href="/login"  class="nav-link">Log in</a>
+      <a href="/signup" class="nav-cta">Sign up</a>
+    <% } %>
   </div>
 </nav>
 

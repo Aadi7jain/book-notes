@@ -1,7 +1,6 @@
-<%- include('partials/head', { pageTitle: 'Stats', activePage: 'stats' }) %>
+<%- include('partials/head', { pageTitle: 'Stats', activePage: 'stats', user: user }) %>
 
 <main class="main main--stats">
-
   <div class="stats-page-header">
     <h1 class="stats-title">Reading Stats</h1>
     <p class="stats-sub">Your library by the numbers</p>
@@ -18,7 +17,7 @@
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.avg_rating ?? '—' %></span>
-      <span class="overview-l">Average rating</span>
+      <span class="overview-l">Avg rating</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.highest_rating ?? '—' %></span>
@@ -26,18 +25,18 @@
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.genre_count %></span>
-      <span class="overview-l">Genres explored</span>
+      <span class="overview-l">Genres</span>
     </div>
     <div class="overview-card">
       <span class="overview-n"><%= overview.currently_reading %></span>
-      <span class="overview-l">Currently reading</span>
+      <span class="overview-l">Reading now</span>
     </div>
   </div>
 
   <div class="stats-grid">
     <% if (byGenre.length) { %>
     <section class="stats-section">
-      <h2 class="section-heading">Books by genre</h2>
+      <h2 class="section-heading">By genre</h2>
       <% const maxCount = Math.max(...byGenre.map(g => Number(g.count))); %>
       <div class="genre-bars">
         <% byGenre.forEach(g => { %>
@@ -55,11 +54,9 @@
 
     <% if (byYear.length) { %>
     <section class="stats-section">
-      <h2 class="section-heading">Books per year</h2>
+      <h2 class="section-heading">By year</h2>
       <div class="year-table">
-        <div class="year-header">
-          <span>Year</span><span>Books</span><span>Avg rating</span>
-        </div>
+        <div class="year-header"><span>Year</span><span>Books</span><span>Avg</span></div>
         <% byYear.forEach(y => { %>
           <div class="year-row">
             <span class="year-val"><%= Math.round(y.year) %></span>
