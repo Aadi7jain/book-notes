@@ -1,32 +1,59 @@
 <%- include('partials/head', { pageTitle: 'Log in', user: null }) %>
 
-<main class="auth-main">
-  <div class="auth-card">
-    <div class="auth-header">
-      <div class="auth-logo">
-        <div class="nav-brand-dot"></div>
-        Book Notes
-      </div>
-      <h1 class="auth-title">Welcome back</h1>
-      <p class="auth-sub">Log in to your reading library</p>
+<div class="auth-page">
+
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="auth-brand-dot"></div>
+      Book Notes
     </div>
-
-    <% if (error) { %><p class="auth-error"><%= error %></p><% } %>
-
-    <form action="/login" method="POST" class="auth-form">
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" class="input" required placeholder="you@example.com" autocomplete="email" />
+    <div class="auth-left-body">
+      <h2 class="auth-left-title">Your personal reading journal</h2>
+      <p class="auth-left-sub">Track every book you read. Write notes, rate books, and see your reading stats grow over time.</p>
+    </div>
+    <div class="auth-left-stats">
+      <div class="auth-stat-item">
+        <span class="auth-stat-n">100%</span>
+        <span class="auth-stat-l">Yours</span>
       </div>
-      <div class="field">
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" class="input" required placeholder="Your password" autocomplete="current-password" />
+      <div class="auth-stat-item">
+        <span class="auth-stat-n">Private</span>
+        <span class="auth-stat-l">Per account</span>
       </div>
-      <button type="submit" class="btn btn--primary btn--full">Log in</button>
-    </form>
-
-    <p class="auth-switch">Don't have an account? <a href="/signup" class="link-teal">Sign up</a></p>
+      <div class="auth-stat-item">
+        <span class="auth-stat-n">Free</span>
+        <span class="auth-stat-l">Always</span>
+      </div>
+    </div>
   </div>
-</main>
+
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <div class="auth-form-header">
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-sub">Log in to your reading library</p>
+      </div>
+
+      <% if (error) { %><p class="auth-error"><%= error %></p><% } %>
+
+      <form action="/login" method="POST" class="auth-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" class="input" required
+                 placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" class="input" required
+                 placeholder="Your password" autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Log in</button>
+      </form>
+
+      <p class="auth-switch">Don't have an account? <a href="/signup" class="link-teal">Sign up</a></p>
+    </div>
+  </div>
+
+</div>
 
 <%- include('partials/foot') %>
