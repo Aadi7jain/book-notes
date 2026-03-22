@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Set new password</title>
+</head>
+<body>
+  <h1>Choose a new password</h1>
+  <form method="post" action="/reset/<%= token %>">
+    <label>New password: <input type="password" name="password" required minlength="8"></label>
+    <button type="submit">Reset password</button>
+  </form>
+</body>
+</html>
