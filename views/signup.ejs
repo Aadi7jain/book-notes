@@ -3,26 +3,34 @@
 <div class="auth-page">
 
   <div class="auth-left">
-    <div class="auth-brand">
-      <div class="auth-brand-dot"></div>
-      Book Notes
-    </div>
-    <div class="auth-left-body">
-      <h2 class="auth-left-title">Start your reading journey today</h2>
-      <p class="auth-left-sub">Join and build your own personal library. Every account is private — your books, your notes, your stats.</p>
-    </div>
-    <div class="auth-left-stats">
-      <div class="auth-stat-item">
-        <span class="auth-stat-n">Open</span>
-        <span class="auth-stat-l">Library covers</span>
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob2"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <div class="auth-brand-dot"></div>
+        <span>Book Notes</span>
       </div>
-      <div class="auth-stat-item">
-        <span class="auth-stat-n">Stats</span>
-        <span class="auth-stat-l">Per user</span>
-      </div>
-      <div class="auth-stat-item">
-        <span class="auth-stat-n">Free</span>
-        <span class="auth-stat-l">Forever</span>
+      <div class="auth-left-body">
+        <h2 class="auth-left-title">Start your reading journey today</h2>
+        <p class="auth-left-sub">Your own private library. Every account is completely separate.</p>
+        <div class="auth-feature-list">
+          <div class="auth-feature">
+            <span class="auth-feature-icon">&#9632;</span>
+            <span>Free forever</span>
+          </div>
+          <div class="auth-feature">
+            <span class="auth-feature-icon">&#9632;</span>
+            <span>Private per account</span>
+          </div>
+          <div class="auth-feature">
+            <span class="auth-feature-icon">&#9632;</span>
+            <span>Search Open Library instantly</span>
+          </div>
+          <div class="auth-feature">
+            <span class="auth-feature-icon">&#9632;</span>
+            <span>Works on all devices</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -31,7 +39,7 @@
     <div class="auth-form-wrap">
       <div class="auth-form-header">
         <h1 class="auth-title">Create an account</h1>
-        <p class="auth-sub">Start tracking your reading</p>
+        <p class="auth-sub">Start tracking your reading today</p>
       </div>
 
       <% if (error) { %><p class="auth-error"><%= error %></p><% } %>
