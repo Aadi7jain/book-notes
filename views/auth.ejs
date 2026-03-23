@@ -1,27 +1,6 @@
 <div class="auth-form-header">
   <!-- ...existing code... -->
+  <div style="margin-top: 12px; text-align: right;">
+    <a href="/reset" style="color: #9B6E52; text-decoration: underline; text-underline-offset: 3px; font-size: 13px; font-weight: 500;">Forgot password?</a>
+  </div>
 </div>
-<p class="auth-forgot" style="margin-top:8px; text-align:right;">
-  <a href="/reset" class="link-teal">Forgot password?</a>
-</p>
-<!-- ensure the forgot link moves below the password field so it's visible on the auth UI -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  try {
-    var forgot = document.querySelector('.auth-forgot');
-    // find the password input inside common auth form regions
-    var pwd = document.querySelector('.auth-form input[type="password"], .auth-right input[type="password"], input[type="password"]');
-    if (forgot && pwd) {
-      // move the element directly after the password input's container
-      var container = pwd.closest('.field') || pwd.parentNode;
-      if (container) container.appendChild(forgot);
-      // ensure right alignment and modest spacing
-      forgot.style.marginTop = '8px';
-      forgot.style.textAlign = 'right';
-    }
-  } catch (e) {
-    // silently ignore in case structure differs
-    console.warn('Could not relocate forgot link', e);
-  }
-});
-</script>
