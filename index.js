@@ -17,7 +17,7 @@ import pgSession    from "connect-pg-simple";
 import bcrypt       from "bcrypt";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -26,7 +26,13 @@ const app     = express();
 const PORT    = process.env.PORT || 3000;
 const IS_PROD = process.env.NODE_ENV === "production";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const mailer = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER || "booknotes.noreply@gmail.com",
+    pass: process.env.GMAIL_PASS,
+  },
+});
 
 app.set("trust proxy", 1);
 
@@ -288,8 +294,8 @@ app.post("/reset", authLimiter,
           [email, token, expires]
         );
         const resetUrl = `${process.env.APP_BASE_URL || "http://localhost:" + PORT}/reset/${token}`;
-        await resend.emails.send({
-          from:    "Book Notes <onboarding@resend.dev>",
+        await mailer.sendMail({
+          from:    '"Book Notes" <booknotes.noreply@gmail.com>',
           to:      email,
           subject: "Reset your Book Notes password",
           html: `
