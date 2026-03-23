@@ -1,12 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Reset link sent</title>
-</head>
-<body>
-  <h1>Check your email</h1>
-  <p>If the address <strong><%= email %></strong> exists, a reset link has been sent.</p>
-  <p>Check your inbox or spam folder.</p>
-</body>
-</html>
+<%- include('partials/head', { pageTitle: 'Check your email', user: null }) %>
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob2"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <div class="auth-brand-dot"></div>
+        <span>Book Notes</span>
+      </div>
+      <div class="auth-left-body">
+        <h2 class="auth-left-title">Email on its way</h2>
+        <p class="auth-left-sub">Check your inbox and click the link to set a new password.</p>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <div class="auth-form-header">
+        <h1 class="auth-title">Check your inbox</h1>
+        <p class="auth-sub">Reset link sent to <strong><%= email %></strong></p>
+      </div>
+      <p style="color:var(--muted, #888); font-size:14px; line-height:1.7; margin-bottom:28px;">
+        The link expires in <strong>1 hour</strong>. If you don't see the email, check your spam or junk folder.
+      </p>
+      <a href="/login" class="btn btn--primary btn--full">Back to log in</a>
+      <p class="auth-switch" style="margin-top:16px;">
+        Wrong address? <a href="/reset" class="link-teal">Try again</a>
+      </p>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

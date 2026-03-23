@@ -17,6 +17,7 @@ import pgSession    from "connect-pg-simple";
 import bcrypt       from "bcrypt";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
+import { Resend } from "resend";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -24,6 +25,8 @@ const __dirname  = path.dirname(__filename);
 const app     = express();
 const PORT    = process.env.PORT || 3000;
 const IS_PROD = process.env.NODE_ENV === "production";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.set("trust proxy", 1);
 
@@ -255,6 +258,109 @@ app.post("/logout", (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════
+//  PASSWORD RESET
+// ══════════════════════════════════════════════════════
+
+// Show reset request form
+app.get("/reset", (req, res) => {
+  if (req.session?.userId) return res.redirect("/");
+  res.render("reset-request", { error: null });
+});
+
+// Handle reset request — generate token, send email
+app.post("/reset", authLimiter,
+  body("email").trim().isEmail().withMessage("Please enter a valid email address.").normalizeEmail(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("reset-request", { error: errors.array()[0].msg });
+    }
+    const email = req.body.email;
+    try {
+      const userRes = await db.query("SELECT id FROM users WHERE email = $1", [email]);
+      if (userRes.rows.length) {
+        const token   = randomBytes(32).toString("hex");
+        const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        await db.query(
+          `INSERT INTO password_resets (email, token, expires_at)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (email) DO UPDATE SET token = $2, expires_at = $3`,
+          [email, token, expires]
+        );
+        const resetUrl = `${process.env.APP_BASE_URL || "http://localhost:" + PORT}/reset/${token}`;
+        await resend.emails.send({
+          from:    "Book Notes <onboarding@resend.dev>",
+          to:      email,
+          subject: "Reset your Book Notes password",
+          html: `
+            <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
+              <h2 style="margin:0 0 8px">Reset your password</h2>
+              <p style="color:#555;margin:0 0 24px">Click the button below to choose a new password. This link expires in 1 hour.</p>
+              <a href="${resetUrl}"
+                 style="display:inline-block;background:#9B6E52;color:#fff;text-decoration:none;padding:12px 24px;border-radius:6px;font-weight:600">
+                Reset password
+              </a>
+              <p style="color:#999;font-size:13px;margin-top:24px">
+                If you didn't request this, you can safely ignore this email.
+              </p>
+            </div>
+          `,
+        });
+      }
+      // Always render sent — never leak whether email exists
+      res.render("reset-sent", { email });
+    } catch (err) {
+      console.error("Reset request failed:", err);
+      res.status(500).render("error", { message: "Could not send reset email. Please try again.", user: null });
+    }
+  }
+);
+
+// Show new password form
+app.get("/reset/:token", async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM password_resets WHERE token = $1 AND expires_at > NOW()",
+      [req.params.token]
+    );
+    if (!rows.length) {
+      return res.status(400).render("error", { message: "This reset link is invalid or has expired. Please request a new one.", user: null });
+    }
+    res.render("reset-form", { token: req.params.token, error: null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error", { message: "Something went wrong.", user: null });
+  }
+});
+
+// Handle new password submission
+app.post("/reset/:token", authLimiter,
+  body("password").isLength({ min: 8 }).withMessage("Password must be at least 8 characters."),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("reset-form", { token: req.params.token, error: errors.array()[0].msg });
+    }
+    try {
+      const { rows } = await db.query(
+        "SELECT * FROM password_resets WHERE token = $1 AND expires_at > NOW()",
+        [req.params.token]
+      );
+      if (!rows.length) {
+        return res.status(400).render("error", { message: "This reset link is invalid or has expired. Please request a new one.", user: null });
+      }
+      const hash = await bcrypt.hash(req.body.password, 12);
+      await db.query("UPDATE users SET password_hash = $1 WHERE email = $2", [hash, rows[0].email]);
+      await db.query("DELETE FROM password_resets WHERE token = $1", [req.params.token]);
+      res.render("reset-success");
+    } catch (err) {
+      console.error("Password reset failed:", err);
+      res.status(500).render("error", { message: "Could not reset password. Please try again.", user: null });
+    }
+  }
+);
+
+// ══════════════════════════════════════════════════════
 //  BOOK ROUTES — all require auth, all filtered by user
 // ══════════════════════════════════════════════════════
 
@@ -472,96 +578,7 @@ app.get("/api/search", requireAuth, apiLimiter,
   }
 );
 
-// ── Password reset (simple implementation) ─────────────────────────
-// In-memory token store: token -> { email, expires }
-const resetTokens = new Map();
-
-function generateToken() {
-  return randomBytes(20).toString('hex');
-}
-
-function createReset(email) {
-  const token = generateToken();
-  const expires = Date.now() + 1000 * 60 * 60; // 1 hour
-  resetTokens.set(token, { email, expires });
-  return token;
-}
-
-async function sendResetLink(email, token) {
-  const url = `${process.env.APP_BASE_URL || ('http://localhost:' + PORT)}/reset/${token}`;
-  // If SMTP configured (SMTP_URL), you could add real email sending here.
-  // For now, log the link so developers can copy it.
-  console.info(`Password reset for ${email}: ${url}`);
-}
-
-// Render password reset request form
-app.get('/reset', (req, res) => {
-  res.render('reset-request', { csrfToken: generateToken(req, res) });
-});
-
-// Handle reset request submission
-app.post('/reset',
-  body('email').trim().isEmail().withMessage('Provide a valid email.').normalizeEmail(),
-  handleValidationErrors,
-  async (req, res) => {
-    const email = req.body.email;
-    try {
-      // Create token and send link (logged)
-      const token = createReset(email);
-      await sendResetLink(email, token);
-      res.render('reset-sent', { email });
-    } catch (err) {
-      console.error('Reset request failed:', err.message || err);
-      res.status(500).render('error', { message: 'Could not process reset request.' });
-    }
-  }
-);
-
-// Show password reset form
-app.get('/reset/:token', async (req, res) => {
-  const token = req.params.token;
-  const entry = resetTokens.get(token);
-  if (!entry || entry.expires < Date.now()) {
-    return res.status(400).render('error', { message: 'Reset token is invalid or expired.' });
-  }
-  res.render('reset-form', { token, csrfToken: generateToken(req, res) });
-});
-
-// Handle new password submission
-app.post('/reset/:token',
-  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
-  handleValidationErrors,
-  async (req, res) => {
-    const token = req.params.token;
-    const entry = resetTokens.get(token);
-    if (!entry || entry.expires < Date.now()) {
-      return res.status(400).render('error', { message: 'Reset token is invalid or expired.' });
-    }
-    const email = entry.email;
-    const password = req.body.password;
-    try {
-      // Attempt to update users table if present. Use PBKDF2 for hashing.
-      const salt = randomBytes(16).toString('hex');
-      const hash = require('crypto').pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
-      const stored = `${salt}$${hash}`;
-      try {
-        await db.query('UPDATE users SET password=$1 WHERE email=$2', [stored, email]);
-        console.info('Password updated in DB for', email);
-      } catch (dbErr) {
-        console.warn('DB update failed (user table may not exist):', dbErr.message);
-        // Do nothing else — we still show success so user flow completes.
-      }
-
-      // Consume token
-      resetTokens.delete(token);
-      res.render('reset-success');
-    } catch (err) {
-      console.error('Reset failed:', err.message || err);
-      res.status(500).render('error', { message: 'Could not reset password.' });
-    }
-  }
-);
-
+// ── 404 & error handlers ───────────────────────────────
 app.use((req, res) => res.status(404).render("error", { message: "Page not found.", user: req.session?.userName }));
 
 app.use((err, req, res, next) => {

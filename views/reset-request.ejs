@@ -1,14 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Reset password</title>
-</head>
-<body>
-  <h1>Reset your password</h1>
-  <form method="post" action="/reset">
-    <label>Email: <input type="email" name="email" required></label>
-    <button type="submit">Send reset link</button>
-  </form>
-</body>
-</html>
+<%- include('partials/head', { pageTitle: 'Reset password', user: null }) %>
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob2"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <div class="auth-brand-dot"></div>
+        <span>Book Notes</span>
+      </div>
+      <div class="auth-left-body">
+        <h2 class="auth-left-title">Forgot your password?</h2>
+        <p class="auth-left-sub">No worries — enter your email and we'll send you a secure reset link.</p>
+        <div class="auth-feature-list">
+          <div class="auth-feature">
+            <span class="auth-feature-icon">&#9632;</span>
+            <span>Link expires in 1 hour</span>
+          </div>
+          <div class="auth-feature">
+            <span class="auth-feature-icon">&#9632;</span>
+            <span>Check spam if you don't see it</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <div class="auth-form-header">
+        <h1 class="auth-title">Reset password</h1>
+        <p class="auth-sub">We'll email you a secure link</p>
+      </div>
+      <% if (error) { %><p class="auth-error"><%= error %></p><% } %>
+      <form action="/reset" method="POST" class="auth-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" class="input" required
+                 placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Send reset link</button>
+      </form>
+      <p class="auth-switch">Remember it? <a href="/login" class="link-teal">Back to log in</a></p>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

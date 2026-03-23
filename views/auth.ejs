@@ -1,6 +1,23 @@
-<div class="auth-form-header">
-  <!-- ...existing code... -->
-  <div style="margin-top: 12px; text-align: right;">
-    <a href="/reset" style="color: #9B6E52; text-decoration: underline; text-underline-offset: 3px; font-size: 13px; font-weight: 500;">Forgot password?</a>
+<div class="auth-form-wrap">
+  <div class="auth-form-header">
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Log in to your reading library</p>
   </div>
+  <form method="post" class="auth-form">
+    <div class="field">
+      <label>EMAIL</label>
+      <input type="email" name="email" required class="input">
+    </div>
+    <div class="field">
+      <label>PASSWORD</label>
+      <input type="password" name="password" required class="input">
+      <div style="margin-top: 10px; text-align: right;">
+        <button type="button" onclick="window.location.href='/reset'" style="background: none; border: none; color: #9B6E52; text-decoration: underline; font-size: 13px; font-weight: 500; cursor: pointer; padding: 0;">Forgot password?</button>
+      </div>
+    </div>
+    <button type="submit" class="btn btn--primary btn--full">Log in</button>
+  </form>
+  <p style="text-align: center; margin-top: 20px; padding: 12px 0;">
+    <button type="button" onclick="window.location.href='/reset'" style="background: #f5ede7; border: 1px solid #9B6E52; color: #9B6E52; text-decoration: none; font-size: 14px; font-weight: 600; cursor: pointer; padding: 10px 20px; margin: 0; border-radius: 6px;">Forgot password?</button>
+  </p>
 </div>

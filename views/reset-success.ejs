@@ -1,12 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Password reset complete</title>
-</head>
-<body>
-  <h1>Password reset</h1>
-  <p>Your password has been updated. You can now log in with your new password.</p>
-  <a href="/">Return home</a>
-</body>
-</html>
+<%- include('partials/head', { pageTitle: 'Password updated', user: null }) %>
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-left-blob"></div>
+    <div class="auth-left-blob2"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <div class="auth-brand-dot"></div>
+        <span>Book Notes</span>
+      </div>
+      <div class="auth-left-body">
+        <h2 class="auth-left-title">You're all set</h2>
+        <p class="auth-left-sub">Your password has been updated. Head back and log in.</p>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <div class="auth-form-header">
+        <h1 class="auth-title">Password updated</h1>
+        <p class="auth-sub">You can now log in with your new password</p>
+      </div>
+      <a href="/login" class="btn btn--primary btn--full">Log in</a>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

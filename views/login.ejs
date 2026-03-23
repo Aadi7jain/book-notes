@@ -1,7 +1,5 @@
 <%- include('partials/head', { pageTitle: 'Log in', user: null }) %>
-
 <div class="auth-page">
-
   <div class="auth-left">
     <div class="auth-left-blob"></div>
     <div class="auth-left-blob2"></div>
@@ -34,16 +32,13 @@
       </div>
     </div>
   </div>
-
   <div class="auth-right">
     <div class="auth-form-wrap">
       <div class="auth-form-header">
         <h1 class="auth-title">Welcome back</h1>
         <p class="auth-sub">Log in to your reading library</p>
       </div>
-
       <% if (error) { %><p class="auth-error"><%= error %></p><% } %>
-
       <form action="/login" method="POST" class="auth-form">
         <div class="field">
           <label for="email">Email</label>
@@ -54,14 +49,14 @@
           <label for="password">Password</label>
           <input id="password" name="password" type="password" class="input" required
                  placeholder="Your password" autocomplete="current-password" />
+          <div style="text-align:right; margin-top:6px;">
+            <a href="/reset" class="link-teal" style="font-size:13px;">Forgot password?</a>
+          </div>
         </div>
         <button type="submit" class="btn btn--primary btn--full">Log in</button>
       </form>
-
       <p class="auth-switch">Don't have an account? <a href="/signup" class="link-teal">Sign up free</a></p>
     </div>
   </div>
-
 </div>
-
 <%- include('partials/foot') %>
